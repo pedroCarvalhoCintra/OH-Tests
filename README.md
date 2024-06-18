@@ -1,2 +1,2 @@
 # OH-Tests
-Repository for Verification, Validation and Tests of Software (MC646/MO409) final project.
+Repository for Verification, Validation and Software Testing (MC646/MO409) final project.
