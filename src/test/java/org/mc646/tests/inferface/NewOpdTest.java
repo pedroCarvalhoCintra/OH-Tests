@@ -174,12 +174,12 @@ public class NewOpdTest extends OHCoreTestCase {
 	public void testCase() throws Exception {
 		if (expectedException != null) {
 			try {
+				opd.setDisease(diseaseId == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
+				opd.setDisease2(disease2Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
+				opd.setDisease3(disease3Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
+				opd.setPatient(patientId == -1 ? null : patientIoOperationRepository.findOne(patientId));
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					opd.setDisease(diseaseId == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
-					opd.setDisease2(disease2Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
-					opd.setDisease3(disease3Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
-					opd.setPatient(patientId == -1 ? null : patientIoOperationRepository.findOne(patientId));
 					boolean result = disabled.newOpd(opd);
 				} else {
 					boolean result = opdManager.newOpd(opd);

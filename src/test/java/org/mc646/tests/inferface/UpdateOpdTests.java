@@ -142,30 +142,49 @@ public class UpdateOpdTests extends OHCoreTestCase {
 	public void testCase() throws Exception {
 		if (expectedException != null) {
 			try {
+				Opd opd = opdId == null ? null : opdIoOperationRepository.findOne(opdId);
+				if (opd != null) {
+					opd.setDisease(diseaseId == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
+					opd.setDisease2(disease2Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
+					opd.setDisease3(disease3Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
+					opd.setPatient(patientId == -1 ? null : patientIoOperationRepository.findOne(patientId));
+					opd.setAge(age);
+					opd.setDate(date);
+					opd.setNote(notes);
+					opd.setSex(sex);
+					opd.setNewPatient(newPatient);
+				}
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					boolean result = disabled.newOpd(opd);
+					Opd result = disabled.updateOpd(opd);
 				} else {
 					boolean result = opdManager.newOpd(opd);
-				}
+				}				
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());
 			}
 		} else {
-			Opd opd = opdIoOperationRepository.getOne(opdId);
+			Opd opd = opdIoOperationRepository.findOne(opdId);
 			opd.setDisease(diseaseId == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
 			opd.setDisease2(disease2Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
 			opd.setDisease3(disease3Id == null ? null : diseaseIoOperationRepository.findOneByCode(diseaseId));
 			opd.setPatient(patientId == -1 ? null : patientIoOperationRepository.findOne(patientId));
-			boolean result = opdManager.newOpd(opd);
-			assertEquals(expectedResult, result);
-			List<Opd> opds = opdIoOperationRepository.findAll();
-			assertEquals(expectedSize, opds.size());
-			for (int i = 0; i < opds.size(); i++) {
-				assertEquals(expectedCodes.get(i), opds.get(i).getCode());
-			}
-
+			opd.setAge(age);
+			opd.setDate(date);
+			opd.setNote(notes);
+			opd.setSex(sex);
+			opd.setNewPatient(newPatient);
+			Opd result = opdManager.updateOpd(opd);
+			assertEquals(opd.getCode(), result.getCode());
+			assertEquals(opd.getDisease(), result.getDisease());
+			assertEquals(opd.getDisease2(), result.getDisease2());
+			assertEquals(opd.getDisease3(), result.getDisease3());
+			assertEquals(opd.getPatient(), result.getPatient());
+			assertEquals(opd.getAge(), result.getAge());
+			assertEquals(opd.getDate(), result.getDate());
+			assertEquals(opd.getSex(), result.getSex());
+			assertEquals(opd.getNewPatient(), result.getNewPatient());
 		}
 	}
 }
