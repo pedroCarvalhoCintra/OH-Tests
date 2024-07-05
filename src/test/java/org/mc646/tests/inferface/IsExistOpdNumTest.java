@@ -1,8 +1,7 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
 
 import org.isf.OHCoreTestCase;
 import org.isf.disease.model.Disease;
-import org.isf.opd.model.Opd;
 import org.isf.disease.service.DiseaseIoOperationRepository;
 import org.isf.distype.service.DiseaseTypeIoOperationRepository;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -12,20 +11,27 @@ import org.isf.patient.service.PatientIoOperationRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Arrays;
-import java.util.GregorianCalendar;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.Assert.assertTrue;
 
+@RunWith(Parameterized.class)
+public class IsExistOpdNumTest extends OHCoreTestCase {
+	@ClassRule
+	public static final SpringClassRule springClassRule = new SpringClassRule();
 
-public class DeleteOpdTest extends OHCoreTestCase {
-
+	@Rule
+	public final SpringMethodRule springMethodRule = new SpringMethodRule();
 	@Autowired
 	OpdBrowserManager opdManager = new OpdBrowserManager();
 	@Autowired
@@ -45,31 +51,29 @@ public class DeleteOpdTest extends OHCoreTestCase {
 	public boolean databaseConnection;
 
 	@Parameterized.Parameter(1)
-	public Integer opdId;
+	public Integer opdNum;
 
 	@Parameterized.Parameter(2)
-	public String diseaseCode;
+	public Integer year;
 
 	@Parameterized.Parameter(3)
-	public Integer patientId;
+	public boolean expectedResult;
 
 	@Parameterized.Parameter(4)
-	public Opd opd;
-
-	@Parameterized.Parameter(5)
-	public boolean expectedReturn;
-
-	@Parameterized.Parameter(6)
 	public String expectedException;
 
 
 	@Parameterized.Parameters
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-			/* 1 */ { true, 1, "Acne", 1, null, true, null},
-			/* 2 */ { false, 1, "Acne", 1, null, null, "java.lang.NullPointerException" },
-			/* 3 */ { true, null, null, null, null, null, "org.isf.utils.exception.OHServiceException" },
-			/* 4 */ { true, null, "Acne", 1, null, null, "org.isf.utils.exception.OHServiceException" } });
+			/* 1 */ { true, 1, 1, false, null },
+			/* 2 */ { false, 1, 1, false, "java.lang.NullPointerException" },
+			/* 3 */ { true, null, 1, false, "org.isf.utils.exception.OHServiceException" },
+			/* 4 */ { true, 0, 1, false, "org.isf.utils.exception.OHServiceException" },
+			/* 5 */ { true, 10, 1, false, null },
+			/* 6 */ { true, 1, null, false, "org.isf.utils.exception.OHServiceException" },
+			/* 7 */ { true, 1, 0, true, null },
+			/* 8 */ { true, 1, 1900, false, null } });
 	}
 
 
@@ -107,25 +111,22 @@ public class DeleteOpdTest extends OHCoreTestCase {
 
 	@Test
 	public void testCase() throws Exception {
-		if (opdId != null ) opd = opdIoOperationRepository.findOne(opdId);
 		if (expectedException != null) {
 			try {
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					boolean retunReceived = disabled.deleteOpd(opd);
+					boolean result = disabled.isExistOpdNum(opdNum, year);
 				} else {
-					boolean retunReceived = opdManager.deleteOpd(opd);
+					boolean result = opdManager.isExistOpdNum(opdNum, year);
 				}
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());
 			}
 		} else {
-			boolean retunReceived;
-			if (diseaseCode != null && patientId != null) opd = dataSetUp.newOpd(0, 'M', 0, diseaseIoOperationRepository.findOne(diseaseCode), null, null, new GregorianCalendar(2004, 2, 2), 'n', "", patientIoOperationRepository.findOne((patientId)));
-			if (opd == null) retunReceived = false;
-			else retunReceived = opdManager.deleteOpd(opd);
-			assertEquals(expectedReturn, retunReceived);
+			boolean result = opdManager.isExistOpdNum(opdNum, year);
+			assertEquals(expectedResult, result);
 		}
 	}
+
 }

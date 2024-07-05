@@ -1,4 +1,4 @@
-package org.mc646.tests;
+package org.mc646.tests.statemodel;
 
 import org.graphwalker.core.condition.EdgeCoverage;
 import org.graphwalker.core.condition.ReachedVertex;

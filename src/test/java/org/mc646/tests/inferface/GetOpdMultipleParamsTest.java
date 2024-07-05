@@ -1,4 +1,4 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -69,19 +69,19 @@ public class GetOpdMultipleParamsTest extends OHCoreTestCase {
 	public GregorianCalendar dateTo;
 
 	@Parameter(5)
-	public int ageFrom;
+	public Integer ageFrom;
 
 	@Parameter(6)
-	public int ageTo;
+	public Integer ageTo;
 
 	@Parameter(7)
-	public char sex;
+	public Character sex;
 
 	@Parameter(8)
-	public char newPatient;
+	public Character newPatient;
 
 	@Parameter(9)
-	public int expectedSize;
+	public Integer expectedSize;
 
 	@Parameter(10)
 	public List<String> expectedNames;

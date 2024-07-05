@@ -1,18 +1,13 @@
-package org.mc646.tests;
-
-import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package org.mc646.tests.inferface;
 
 import org.isf.OHCoreTestCase;
+import org.isf.disease.model.Disease;
+import org.isf.opd.model.Opd;
 import org.isf.disease.service.DiseaseIoOperationRepository;
 import org.isf.distype.service.DiseaseTypeIoOperationRepository;
 import org.isf.opd.manager.OpdBrowserManager;
-import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperationRepository;
+import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperationRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -22,14 +17,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.util.Arrays;
+import java.util.GregorianCalendar;
+
+import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(Parameterized.class)
-public class GetOpdListTest extends OHCoreTestCase {
+public class DeleteOpdTest extends OHCoreTestCase {
 	@ClassRule
 	public static final SpringClassRule springClassRule = new SpringClassRule();
 
@@ -49,35 +49,38 @@ public class GetOpdListTest extends OHCoreTestCase {
 	static DefaultDataSetUp defaultData;
 	static DataSetUp dataSetUp = new DataSetUp();
 
-	@Parameter(0)
+
+	@Parameterized.Parameter(0)
 	public boolean databaseConnection;
 
-	@Parameter(1)
-	public int patientCode;
+	@Parameterized.Parameter(1)
+	public Integer opdId;
 
-	@Parameter(2)
-	public int expectedSize;
+	@Parameterized.Parameter(2)
+	public String diseaseCode;
 
-	@Parameter(3)
-	public List<String> expectedNames;
+	@Parameterized.Parameter(3)
+	public Integer patientId;
 
-	@Parameter(4)
-	public List<Integer> expectedCodes;
+	@Parameterized.Parameter(4)
+	public Opd opd;
 
-	@Parameter(5)
+	@Parameterized.Parameter(5)
+	public Boolean expectedReturn;
+
+	@Parameterized.Parameter(6)
 	public String expectedException;
 
-	@Parameters
+
+	@Parameterized.Parameters
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-				/* 0 */ { true, 1, 1, new ArrayList<>(Arrays.asList("Bob")), new ArrayList<>(Arrays.asList(1)), null },
-				/* 1 */ { true, 0, 4, new ArrayList<>(Arrays.asList("Bob", "Alice", "Craig", "Daphine")),
-						new ArrayList<>(Arrays.asList(1, 2, 3, 4)), null },
-				/* 2 */ { false, 1, 0, null, null, "java.lang.NullPointerException" },
-				/* 3 */ { true, null, 0, null, null, "org.isf.utils.exception.OHServiceException" },
-				/* 4 */ { false, -1, 0, null, null, "org.isf.utils.exception.OHServiceException" },
-				/* 5 */ { true, 10, 0, new ArrayList<>(), new ArrayList<>(), null } });
+			/* 1 */ { true, 1, "Acne", 1, null, true, null},
+			/* 2 */ { false, 1, "Acne", 1, null, null, "java.lang.NullPointerException" },
+			/* 3 */ { true, null, null, null, null, null, "org.isf.utils.exception.OHServiceException" },
+			/* 4 */ { true, null, "Acne", 1, null, null, "org.isf.utils.exception.OHServiceException" } });
 	}
+
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -94,11 +97,11 @@ public class GetOpdListTest extends OHCoreTestCase {
 		}
 
 		for (int i = 0; i < defaultData.getDefaultDiseases().size(); i++) {
-			diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
+			Disease d = diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultPatients().size(); i++) {
-			patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
+			Patient p = patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultOpds().size(); i++) {
@@ -113,25 +116,25 @@ public class GetOpdListTest extends OHCoreTestCase {
 
 	@Test
 	public void testCase() throws Exception {
+		if (opdId != null ) opd = opdIoOperationRepository.findOne(opdId);
 		if (expectedException != null) {
 			try {
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					List<Opd> opds = disabled.getOpdList(patientCode);
+					boolean retunReceived = disabled.deleteOpd(opd);
 				} else {
-					List<Opd> opds = opdManager.getOpdList(patientCode);
+					boolean retunReceived = opdManager.deleteOpd(opd);
 				}
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());
 			}
 		} else {
-			List<Opd> opds = opdManager.getOpdList(patientCode);
-			assertEquals(expectedSize, opds.size());
-			for (int i = 0; i < opds.size(); i++) {
-				assertEquals(expectedNames.get(i), opds.get(i).getfirstName());
-				assertEquals(expectedCodes.get(i), opds.get(i).getCode());
-			}
+			boolean retunReceived;
+			if (diseaseCode != null && patientId != null) opd = dataSetUp.newOpd(0, 'M', 0, diseaseIoOperationRepository.findOne(diseaseCode), null, null, new GregorianCalendar(2004, 2, 2), 'n', "", patientIoOperationRepository.findOne((patientId)));
+			if (opd == null) retunReceived = false;
+			else retunReceived = opdManager.deleteOpd(opd);
+			assertEquals(expectedReturn, retunReceived);
 		}
 	}
 }

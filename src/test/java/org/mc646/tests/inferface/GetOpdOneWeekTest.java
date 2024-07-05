@@ -1,4 +1,4 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -70,7 +70,7 @@ public class GetOpdOneWeekTest extends OHCoreTestCase {
 	public boolean databaseConnection;
 
 	@Parameter(1)
-	public boolean oneWeek;
+	public Boolean oneWeek;
 
 	@Parameter(2)
 	public int expectedSize;

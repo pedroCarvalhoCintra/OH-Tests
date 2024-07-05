@@ -4,7 +4,7 @@
  * Mon Jul 01 16:46:27 GMT 2024
  */
 
-package org.mc646.tests;
+package org.mc646.tests.evosuite;
 
 import org.evosuite.runtime.annotation.EvoSuiteClassExclude;
 import org.junit.BeforeClass;

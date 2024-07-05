@@ -1,27 +1,42 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
+
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 import org.isf.OHCoreTestCase;
 import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperationRepository;
 import org.isf.distype.service.DiseaseTypeIoOperationRepository;
 import org.isf.opd.manager.OpdBrowserManager;
+import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperationRepository;
 import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperationRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+@RunWith(Parameterized.class)
+public class GetLastOpdTest extends OHCoreTestCase {
+	@ClassRule
+	public static final SpringClassRule springClassRule = new SpringClassRule();
 
-public class IsExistOpdNumTest extends OHCoreTestCase {
-
+	@Rule
+	public final SpringMethodRule springMethodRule = new SpringMethodRule();
 	@Autowired
 	OpdBrowserManager opdManager = new OpdBrowserManager();
 	@Autowired
@@ -36,18 +51,17 @@ public class IsExistOpdNumTest extends OHCoreTestCase {
 	static DefaultDataSetUp defaultData;
 	static DataSetUp dataSetUp = new DataSetUp();
 
-
 	@Parameterized.Parameter(0)
 	public boolean databaseConnection;
 
 	@Parameterized.Parameter(1)
-	public int opdNum;
+	public Integer patientCode;
 
 	@Parameterized.Parameter(2)
-	public int year;
+	public String expectedName;
 
 	@Parameterized.Parameter(3)
-	public boolean expectedResult;
+	public Integer expectedCode;
 
 	@Parameterized.Parameter(4)
 	public String expectedException;
@@ -56,16 +70,12 @@ public class IsExistOpdNumTest extends OHCoreTestCase {
 	@Parameterized.Parameters
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-			/* 1 */ { true, 1, 1, false, null },
-			/* 2 */ { false, 1, 1, null, "java.lang.NullPointerException" },
-			/* 3 */ { true, null, 1, null, "org.isf.utils.exception.OHServiceException" },
-			/* 4 */ { true, 0, 1, null, "org.isf.utils.exception.OHServiceException" },
-			/* 5 */ { true, 10, 1, false, null },
-			/* 6 */ { true, 1, null, null, "org.isf.utils.exception.OHServiceException" },
-			/* 7 */ { true, 1, 0, true, null },
-			/* 8 */ { true, 1, 1900, false, null } });
+			/* 0 */ { true, 1, "Bob", 1, null },
+			/* 1 */ { false, 1, null, null, "java.lang.NullPointerException" },
+			/* 2 */ { true, null, null, null, "org.isf.utils.exception.OHServiceException" },
+			/* 3 */ { true, 0, null, null, "org.isf.utils.exception.OHServiceException" },
+			/* 4 */ { true, 10, null, null, null } });
 	}
-
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -99,24 +109,44 @@ public class IsExistOpdNumTest extends OHCoreTestCase {
 		cleanH2InMemoryDb();
 	}
 
+//	@Test
+//	public void testCase1() throws Exception {
+//		System.out.println("Test getLastOpd 1 running");
+//		Opd result = opdManager.getLastOpd(1);
+//
+//		assertEquals(1, result.getCode());
+//		assertEquals("Boob", result.getfirstName());
+//		assertEquals(0, result.getAge());
+//		assertEquals('M', result.getSex());
+//		assertEquals("L00-L99 Skin and subcutaneous tissue", result.getDisease().getType().getCode());
+//		assertEquals("Acne", result.getDisease().getCode());
+//		assertEquals(0, result.getProgYear());
+//		assertEquals(new GregorianCalendar(2003, 2, 2), result.getDate());
+//	}
 	@Test
 	public void testCase() throws Exception {
 		if (expectedException != null) {
 			try {
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					boolean result = disabled.isExistOpdNum(opdNum, year);
+					Opd opd = disabled.getLastOpd(patientCode);
 				} else {
-					boolean result = opdManager.isExistOpdNum(opdNum, year);
+					Opd opd = opdManager.getLastOpd(patientCode);
 				}
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());
 			}
 		} else {
-			boolean result = opdManager.isExistOpdNum(opdNum, year);
-			assertEquals(expectedResult, result);
+			Opd opd = opdManager.getLastOpd(patientCode);
+			if (expectedCode == null) {
+				assertEquals(null, opd);	
+			} else {
+				assertEquals(expectedName, opd.getfirstName());
+				assertEquals(expectedCode, opd.getCode());	
+			}
 		}
 	}
+
 
 }

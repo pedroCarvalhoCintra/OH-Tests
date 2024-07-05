@@ -1,32 +1,40 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
 
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.isf.OHCoreTestCase;
-import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperationRepository;
 import org.isf.distype.service.DiseaseTypeIoOperationRepository;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperationRepository;
-import org.isf.patient.model.Patient;
 import org.isf.patient.service.PatientIoOperationRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import java.util.Arrays;
+@RunWith(Parameterized.class)
+public class GetOpdListTest extends OHCoreTestCase {
+	@ClassRule
+	public static final SpringClassRule springClassRule = new SpringClassRule();
 
-public class GetLastOpdTest extends OHCoreTestCase {
-
+	@Rule
+	public final SpringMethodRule springMethodRule = new SpringMethodRule();
 	@Autowired
 	OpdBrowserManager opdManager = new OpdBrowserManager();
 	@Autowired
@@ -41,30 +49,34 @@ public class GetLastOpdTest extends OHCoreTestCase {
 	static DefaultDataSetUp defaultData;
 	static DataSetUp dataSetUp = new DataSetUp();
 
-	@Parameterized.Parameter(0)
+	@Parameter(0)
 	public boolean databaseConnection;
 
-	@Parameterized.Parameter(1)
-	public int patientCode;
+	@Parameter(1)
+	public Integer patientCode;
 
-	@Parameterized.Parameter(2)
-	public String expectedName;
+	@Parameter(2)
+	public Integer expectedSize;
 
-	@Parameterized.Parameter(3)
-	public int expectedCode;
+	@Parameter(3)
+	public List<String> expectedNames;
 
-	@Parameterized.Parameter(4)
+	@Parameter(4)
+	public List<Integer> expectedCodes;
+
+	@Parameter(5)
 	public String expectedException;
 
-
-	@Parameterized.Parameters
+	@Parameters
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-			/* 0 */ { true, 1, "Bob", 1, null },
-			/* 1 */ { false, 1, null, null, "java.lang.NullPointerException" },
-			/* 2 */ { true, null, null, null, "org.isf.utils.exception.OHServiceException" },
-			/* 3 */ { true, 0, null, null, "org.isf.utils.exception.OHServiceException" },
-			/* 4 */ { true, 10, null, null, null } });
+				/* 0 */ { true, 1, 1, new ArrayList<>(Arrays.asList("Bob")), new ArrayList<>(Arrays.asList(1)), null },
+				/* 1 */ { true, 0, 4, new ArrayList<>(Arrays.asList("Bob", "Alice", "Craig", "Daphine")),
+						new ArrayList<>(Arrays.asList(1, 2, 3, 4)), null },
+				/* 2 */ { false, 1, 0, null, null, "java.lang.NullPointerException" },
+				/* 3 */ { true, null, 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 4 */ { false, -1, 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 5 */ { true, 10, 0, new ArrayList<>(), new ArrayList<>(), null } });
 	}
 
 	@BeforeClass
@@ -82,11 +94,11 @@ public class GetLastOpdTest extends OHCoreTestCase {
 		}
 
 		for (int i = 0; i < defaultData.getDefaultDiseases().size(); i++) {
-			Disease d = diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
+			diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultPatients().size(); i++) {
-			Patient p = patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
+			patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultOpds().size(); i++) {
@@ -99,40 +111,27 @@ public class GetLastOpdTest extends OHCoreTestCase {
 		cleanH2InMemoryDb();
 	}
 
-//	@Test
-//	public void testCase1() throws Exception {
-//		System.out.println("Test getLastOpd 1 running");
-//		Opd result = opdManager.getLastOpd(1);
-//
-//		assertEquals(1, result.getCode());
-//		assertEquals("Boob", result.getfirstName());
-//		assertEquals(0, result.getAge());
-//		assertEquals('M', result.getSex());
-//		assertEquals("L00-L99 Skin and subcutaneous tissue", result.getDisease().getType().getCode());
-//		assertEquals("Acne", result.getDisease().getCode());
-//		assertEquals(0, result.getProgYear());
-//		assertEquals(new GregorianCalendar(2003, 2, 2), result.getDate());
-//	}
 	@Test
 	public void testCase() throws Exception {
 		if (expectedException != null) {
 			try {
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					Opd opd = disabled.getLastOpd(patientCode);
+					List<Opd> opds = disabled.getOpdList(patientCode);
 				} else {
-					Opd opd = opdManager.getLastOpd(patientCode);
+					List<Opd> opds = opdManager.getOpdList(patientCode);
 				}
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());
 			}
 		} else {
-			Opd opd = opdManager.getLastOpd(patientCode);
-			assertEquals(expectedName, opd.getfirstName());
-			assertEquals(expectedCode, opd.getCode());
+			List<Opd> opds = opdManager.getOpdList(patientCode);
+			assertEquals(expectedSize, opds.size());
+			for (int i = 0; i < opds.size(); i++) {
+				assertEquals(expectedNames.get(i), opds.get(i).getfirstName());
+				assertEquals(expectedCodes.get(i), opds.get(i).getCode());
+			}
 		}
 	}
-
-
 }

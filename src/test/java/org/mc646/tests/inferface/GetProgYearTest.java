@@ -1,4 +1,4 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
 
 import org.isf.OHCoreTestCase;
 import org.isf.disease.model.Disease;
@@ -11,17 +11,27 @@ import org.isf.patient.service.PatientIoOperationRepository;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@RunWith(Parameterized.class)
 public class GetProgYearTest extends OHCoreTestCase {
+	@ClassRule
+	public static final SpringClassRule springClassRule = new SpringClassRule();
 
+	@Rule
+	public final SpringMethodRule springMethodRule = new SpringMethodRule();
 	@Autowired
 	OpdBrowserManager opdManager = new OpdBrowserManager();
 	@Autowired
@@ -41,10 +51,10 @@ public class GetProgYearTest extends OHCoreTestCase {
 	public boolean databaseConnection;
 
 	@Parameterized.Parameter(1)
-	public int year;
+	public Integer year;
 
 	@Parameterized.Parameter(2)
-	public int expectedProgYear;
+	public Integer expectedProgYear;
 
 	@Parameterized.Parameter(3)
 	public String expectedException;

@@ -1,4 +1,4 @@
-package org.mc646.tests;
+package org.mc646.tests.inferface;
 
 import java.util.ArrayList;
 import java.util.Calendar;
