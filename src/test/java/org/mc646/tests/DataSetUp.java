@@ -59,8 +59,9 @@ public class DataSetUp {
 	public Opd newOpd(int progYear, char sex, int age, Disease disease, Disease disease2, Disease disease3, GregorianCalendar date, char newPatient, String note, Patient patient) {
 		Opd newOpd = new Opd(progYear, sex, age, new Disease("Abe", "abs", new DiseaseType("Aaa", "")));
 		newOpd.setDate(date);
+		newOpd.setDisease(disease);
 		newOpd.setDisease2(disease2);
-		newOpd.setDisease(disease3);
+		newOpd.setDisease3(disease3);
 		newOpd.setNewPatient(newPatient);
 		newOpd.setNote(note);
 		newOpd.setPatient(patient);

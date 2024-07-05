@@ -95,64 +95,67 @@ public class GetOpdMultipleParamsTest extends OHCoreTestCase {
 	@Parameters
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+				/* 0 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
 						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 1, new ArrayList<>(Arrays.asList("Bob")),
 						new ArrayList<>(Arrays.asList(1)), null },
-				{ true, "J00-J99 Respiratory system", "Influenza with pneumonia, seazonal influenza virus detected",
+				/* 1 */ { true, "J00-J99 Respiratory system",
+						"Influenza with pneumonia, seazonal influenza virus detected",
 						new GregorianCalendar(2010, 3, 9), new GregorianCalendar(2010, 3, 9), 31, 31, 'F', 'R', 1,
 						new ArrayList<>(Arrays.asList("Alice")), new ArrayList<>(Arrays.asList(2)), null },
-				{ false, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, null, null, "NullPointerException" },
-				{ true, null, "Acne", new GregorianCalendar(2003, 2, 2), new GregorianCalendar(2003, 2, 2), 0, 0, 'M',
-						'n', 0, null, null, "NullPointerException" },
-				{ true, "W00-W99 Odd diseases", "Acne", new GregorianCalendar(2003, 2, 2),
+				/* 2 */ { false, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, null, null, "java.lang.NullPointerException" },
+				/* 3 */ { true, null, "Acne", new GregorianCalendar(2003, 2, 2), new GregorianCalendar(2003, 2, 2), 0,
+						0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 4 */ { true, "W00-W99 Odd diseases", "Acne", new GregorianCalendar(2003, 2, 2),
 						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, new ArrayList<>(), new ArrayList<>(),
 						null },
-				{ true, "L00-L99 Skin and subcutaneous tissue", null, new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, null, null, "NullPointerException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Urticaria", new GregorianCalendar(2003, 2, 2),
+				/* 5 */ { true, "L00-L99 Skin and subcutaneous tissue", null, new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 6 */ { true, "L00-L99 Skin and subcutaneous tissue", "Urticaria", new GregorianCalendar(2003, 2, 2),
 						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, new ArrayList<>(), new ArrayList<>(),
 						null },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", null, new GregorianCalendar(2003, 2, 2), 0, 0,
-						'M', 'n', 0, null, null, "NullPointerException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 3),
-						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2), null, 0, 0,
-						'M', 'n', 0, null, null, "NullPointerException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 1), 0, 0, 'M', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), null, 0, 'M', 'n', 0, null, null, "NullPointerException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 1, 0, 'M', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), -1, 0, 'M', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, null, 'M', 'n', 0, null, null, "NullPointerException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 2, 0, 'M', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, -1, 'M', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, 0, null, 'n', 0, null, null, "NullPointerException" },
-				{ true, "J00-J99 Respiratory system", "Influenza with pneumonia, seazonal influenza virus detected",
+				/* 7 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", null, new GregorianCalendar(2003, 2, 2),
+						0, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 8 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 3),
+						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 9 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2), null,
+						0, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 10 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 1), 0, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 11 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), null, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 12 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 1, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 13 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), -1, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 14 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, null, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 15 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 2, 0, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 16 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, -1, 'M', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 17 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, 0, null, 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 18 */ { true, "J00-J99 Respiratory system",
+						"Influenza with pneumonia, seazonal influenza virus detected",
 						new GregorianCalendar(2010, 3, 9), new GregorianCalendar(2010, 3, 9), 31, 31, 'M', 'R', 0,
 						new ArrayList<>(), new ArrayList<>(), null },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+				/* 19 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
 						new GregorianCalendar(2003, 2, 2), 0, 0, 'F', 'n', 0, new ArrayList<>(), new ArrayList<>(),
 						null },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, 0, 'K', 'n', 0, null, null, "OHServiceException" },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', null, 0, null, null, "NullPointerException" },
-				{ true, "J00-J99 Respiratory system", "Influenza with pneumonia, seazonal influenza virus detected",
+				/* 20 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, 0, 'K', 'n', 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 21 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', null, 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 22 */ { true, "J00-J99 Respiratory system",
+						"Influenza with pneumonia, seazonal influenza virus detected",
 						new GregorianCalendar(2010, 3, 9), new GregorianCalendar(2010, 3, 9), 31, 31, 'F', 'n', 0,
 						new ArrayList<>(), new ArrayList<>(), null },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+				/* 23 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
 						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'R', 0, new ArrayList<>(), new ArrayList<>(),
 						null },
-				{ true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
-						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'Q', 0, null, null, "OHServiceException" } });
+				/* 24 */ { true, "L00-L99 Skin and subcutaneous tissue", "Acne", new GregorianCalendar(2003, 2, 2),
+						new GregorianCalendar(2003, 2, 2), 0, 0, 'M', 'Q', 0, null, null, "org.isf.utils.exception.OHServiceException" } });
 	}
 
 	@BeforeClass
@@ -170,11 +173,11 @@ public class GetOpdMultipleParamsTest extends OHCoreTestCase {
 		}
 
 		for (int i = 0; i < defaultData.getDefaultDiseases().size(); i++) {
-			Disease d = diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
+			diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultPatients().size(); i++) {
-			Patient p = patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
+			patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultOpds().size(); i++) {
@@ -191,8 +194,14 @@ public class GetOpdMultipleParamsTest extends OHCoreTestCase {
 	public void testCase() throws Exception {
 		if (expectedException != null) {
 			try {
-				List<Opd> opds = opdManager.getOpd(disTypeCode, disCode, dateFrom, dateTo, ageFrom, ageTo, sex,
-						newPatient);
+				if (!databaseConnection) {
+					OpdBrowserManager disabled = new OpdBrowserManager();
+					List<Opd> opds = disabled.getOpd(disTypeCode, disCode, dateFrom, dateTo, ageFrom, ageTo, sex,
+							newPatient);
+				} else {
+					List<Opd> opds = opdManager.getOpd(disTypeCode, disCode, dateFrom, dateTo, ageFrom, ageTo, sex,
+							newPatient);
+				}
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());

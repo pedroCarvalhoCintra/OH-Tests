@@ -1,35 +1,19 @@
 package org.mc646.tests;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.assertj.core.api.Condition;
 import org.isf.OHCoreTestCase;
-import org.isf.disease.model.Disease;
 import org.isf.disease.service.DiseaseIoOperationRepository;
-import org.isf.distype.model.DiseaseType;
 import org.isf.distype.service.DiseaseTypeIoOperationRepository;
-import org.isf.generaldata.GeneralData;
 import org.isf.opd.manager.OpdBrowserManager;
 import org.isf.opd.model.Opd;
 import org.isf.opd.service.OpdIoOperationRepository;
-import org.isf.opd.service.OpdIoOperations;
-import org.isf.patient.model.Patient;
-import org.isf.patient.model.PatientMergedEvent;
 import org.isf.patient.service.PatientIoOperationRepository;
-import org.isf.utils.exception.OHDataValidationException;
-import org.isf.utils.exception.OHException;
-import org.isf.utils.exception.OHServiceException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -41,12 +25,11 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 @RunWith(Parameterized.class)
-public class GetOpdOneWeekTest extends OHCoreTestCase {
+public class GetOpdListTest extends OHCoreTestCase {
 	@ClassRule
 	public static final SpringClassRule springClassRule = new SpringClassRule();
 
@@ -70,7 +53,7 @@ public class GetOpdOneWeekTest extends OHCoreTestCase {
 	public boolean databaseConnection;
 
 	@Parameter(1)
-	public boolean oneWeek;
+	public int patientCode;
 
 	@Parameter(2)
 	public int expectedSize;
@@ -87,12 +70,13 @@ public class GetOpdOneWeekTest extends OHCoreTestCase {
 	@Parameters
 	public static Iterable<Object[]> data() {
 		return Arrays.asList(new Object[][] {
-				/* 0 */ { true, true, 2, new ArrayList<>(Arrays.asList("Craig", "Daphine")),
-						new ArrayList<>(Arrays.asList(3, 4)), null },
-				/* 1 */ { true, false, 1, new ArrayList<>(Arrays.asList("Daphine")), new ArrayList<>(Arrays.asList(4)),
-						null },
-				/* 2 */ { false, true, 0, null, null, "java.lang.NullPointerException" },
-				/* 3 */ { true, null, 0, null, null, "org.isf.utils.exception.OHServiceException" } });
+				/* 0 */ { true, 1, 1, new ArrayList<>(Arrays.asList("Bob")), new ArrayList<>(Arrays.asList(1)), null },
+				/* 1 */ { true, 0, 4, new ArrayList<>(Arrays.asList("Bob", "Alice", "Craig", "Daphine")),
+						new ArrayList<>(Arrays.asList(1, 2, 3, 4)), null },
+				/* 2 */ { false, 1, 0, null, null, "java.lang.NullPointerException" },
+				/* 3 */ { true, null, 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 4 */ { false, -1, 0, null, null, "org.isf.utils.exception.OHServiceException" },
+				/* 5 */ { true, 10, 0, new ArrayList<>(), new ArrayList<>(), null } });
 	}
 
 	@BeforeClass
@@ -133,16 +117,16 @@ public class GetOpdOneWeekTest extends OHCoreTestCase {
 			try {
 				if (!databaseConnection) {
 					OpdBrowserManager disabled = new OpdBrowserManager();
-					List<Opd> opds = disabled.getOpd(oneWeek);
+					List<Opd> opds = disabled.getOpdList(patientCode);
 				} else {
-					List<Opd> opds = opdManager.getOpd(oneWeek);
+					List<Opd> opds = opdManager.getOpdList(patientCode);
 				}
 				fail("Expecting exception: " + expectedException);
 			} catch (Exception e) {
 				assertEquals(expectedException, e.getClass().getName());
 			}
 		} else {
-			List<Opd> opds = opdManager.getOpd(oneWeek);
+			List<Opd> opds = opdManager.getOpdList(patientCode);
 			assertEquals(expectedSize, opds.size());
 			for (int i = 0; i < opds.size(); i++) {
 				assertEquals(expectedNames.get(i), opds.get(i).getfirstName());
