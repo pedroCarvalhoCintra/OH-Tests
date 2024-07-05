@@ -2,7 +2,6 @@ package org.mc646.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.evosuite.runtime.EvoAssertions.verifyException;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -44,7 +43,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 public class GetOpdOneWeekTest extends OHCoreTestCase {
-
 	@Autowired
 	OpdBrowserManager opdManager = new OpdBrowserManager();
 	@Autowired
@@ -68,19 +66,19 @@ public class GetOpdOneWeekTest extends OHCoreTestCase {
 	public void setUp() throws Exception {
 		cleanH2InMemoryDb();
 		DefaultDataSetUp defaultData = new DefaultDataSetUp();
-		
+
 		for (int i = 0; i < defaultData.getDefaultDiseaseTypes().size(); i++) {
 			diseaseTypeIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseaseTypes().get(i));
 		}
 
 		for (int i = 0; i < defaultData.getDefaultDiseases().size(); i++) {
-			Disease d = diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
+			diseaseIoOperationRepository.saveAndFlush(defaultData.getDefaultDiseases().get(i));
 		}
-		
+
 		for (int i = 0; i < defaultData.getDefaultPatients().size(); i++) {
-			Patient p = patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
+			patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
 		}
-		
+
 		for (int i = 0; i < defaultData.getDefaultOpds().size(); i++) {
 			opdIoOperationRepository.saveAndFlush(defaultData.getDefaultOpds().get(i));
 		}
@@ -94,33 +92,24 @@ public class GetOpdOneWeekTest extends OHCoreTestCase {
 	@Test
 	public void testCase1() throws Exception {
 		System.out.println("Test 1 running.");
-		System.out.println(diseaseTypeIoOperationRepository.findAll());
-		System.out.println(diseaseIoOperationRepository.findAll());
-		System.out.println(patientIoOperationRepository.findAll());
-
-//		List<Opd> result = opdManager.getOpd(false);
-//
-//		for (int i = 0; i < result.size(); i++) {
-//			System.out.println(result.get(i).getAge());
-//		}
-//		
-//		assertTrue(result.size() == 1);
-//		assertTrue(result.get(0).getPatient().getName() == "Daphine");
-//		assertTrue(result.get(0).getAge() == 21);
-//		assertTrue(result.get(0).getCode() == 3);
+		List<Opd> result = opdManager.getOpd(true);
+		assertTrue(result.size() == 2);
+		assertTrue(result.get(0).getPatient().getFirstName() == "Craig");
+		assertTrue(result.get(0).getAge() == 100);
+		assertTrue(result.get(0).getCode() == 3);
+		assertTrue(result.get(1).getPatient().getFirstName() == "Daphine");
+		assertTrue(result.get(1).getAge() == 21);
+		assertTrue(result.get(1).getCode() == 4);
 	}
 
 	@Test
 	public void testCase2() throws Exception {
 		System.out.println("Test 2 running.");
-//		List<Opd> result = opdManager.getOpd(false);
-//		assertTrue(result.size() == 2);
-//		assertTrue(result.get(0).getPatient().getName() == "Craig");
-//		assertTrue(result.get(0).getAge() == 100);
-//		assertTrue(result.get(0).getCode() == 2);
-//		assertTrue(result.get(1).getPatient().getName() == "Daphine");
-//		assertTrue(result.get(1).getAge() == 21);
-//		assertTrue(result.get(1).getCode() == 3);
+		List<Opd> result = opdManager.getOpd(false);
+		assertTrue(result.size() == 1);
+		assertTrue(result.get(0).getPatient().getFirstName() == "Daphine");
+		assertTrue(result.get(0).getAge() == 21);
+		assertTrue(result.get(0).getCode() == 4);
 	}
 
 	@Test(expected = NullPointerException.class)

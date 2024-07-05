@@ -41,7 +41,7 @@ public class DefaultDataSetUp {
 				'R', "", patients.get(1)));
 		opds.add(setup.newOpd(0, 'M', 100, diseases.get(0), null, null, yesterday, 'R', "", patients.get(2)));
 		opds.add(setup.newOpd(1, 'F', 21, diseases.get(1), null, diseases.get(2), new GregorianCalendar(),
-				'n', "", patients.get(1)));
+				'n', "", patients.get(3)));
 	}
 
 	public List<Patient> getDefaultPatients() {
