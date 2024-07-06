@@ -20,6 +20,9 @@ public interface IOpdModel {
     @Edge()
     void e_SaveOpd();
 
+	@Edge()
+	void e_SaveEditOpd();
+
     @Edge()
     void e_SearchAllFields();
 
