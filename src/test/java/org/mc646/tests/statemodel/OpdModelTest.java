@@ -9,6 +9,8 @@ import org.graphwalker.core.machine.ExecutionContext;
 import org.graphwalker.core.model.Edge;
 import org.graphwalker.java.test.TestBuilder;
 import org.graphwalker.java.test.TestExecutor;
+import org.isf.OHCoreTestCase;
+import org.isf.OHCoreTestCaseModel;
 import org.isf.disease.service.DiseaseIoOperationRepository;
 import org.isf.distype.service.DiseaseTypeIoOperationRepository;
 import org.isf.opd.manager.OpdBrowserManager;
@@ -18,16 +20,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mc646.tests.inferface.DataSetUp;
 import org.mc646.tests.inferface.DefaultDataSetUp;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
-	public final static Path MODEL_PATH = Paths.get("org/mc646/tests/OPDModel.json");
+	public final static Path MODEL_PATH = Paths.get("org/mc646/tests/statemodel/OPDModel.json");
 	@Autowired
 	OpdBrowserManager opdManager = new OpdBrowserManager();
 	@Autowired
@@ -76,103 +83,97 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	
 	@Override
 	public void v_OpdEditRegistration() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_OpdDelete() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void v_QuestionDelete() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_SaveOpd() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_SearchAllFields() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_DeleteYes() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_SearchOneWeek() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_OpdEdit() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void v_Opd() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_Cancel() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_DeleteNo() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_ValidData() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_InvalidData() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_SearchPatientID() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void e_OpdNew() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 
 	@Override
 	public void v_OpdRegistration() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void e_NewEdge() {
-		// TODO Auto-generated method stub
+		System.out.println("Abe");
 
 	}
 	
@@ -181,14 +182,14 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 		System.out.println("Running test");
 	}
 
-    @Test
-    public void runSmokeTest() {
-        new TestBuilder()
-                .addContext(new OpdModelTest().setNextElement(new Edge().setName("e_Search").build()),
-                        MODEL_PATH,
-                        new AStarPath(new ReachedVertex("v_Opd")))
-                .execute();
-    }
+//    @Test
+//    public void runSmokeTest() {
+//        new TestBuilder()
+//                .addContext(new OpdModelTest().setNextElement(new Edge().setName("e_SearchOneWeek").build()),
+//                        MODEL_PATH,
+//                        new AStarPath(new ReachedVertex("v_Opd")))
+//                .execute();
+//    }
 //
 //    @Test
 //    public void runFunctionalTest() {
@@ -199,13 +200,13 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 //                .execute();
 //    }
 //
-//    @Test
-//    public void runStabilityTest() {
-//        new TestBuilder()
-//                .addContext(new OpdModelTest().setNextElement(new Edge().setName("e_Init").build()),
-//                        MODEL_PATH,
-//                        new RandomPath(new TimeDuration(30, TimeUnit.SECONDS)))
-//                .execute();
-//    }
+    @Test
+    public void runStabilityTest() {
+        new TestBuilder()
+                .addContext(new OpdModelTest().setNextElement(new Edge().setName("e_SearchOneWeek").build()),
+                        MODEL_PATH,
+                        new RandomPath(new TimeDuration(30, TimeUnit.SECONDS)))
+                .execute();
+    }
 	
 }

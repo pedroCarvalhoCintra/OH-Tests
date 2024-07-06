@@ -5,7 +5,7 @@ import org.graphwalker.java.annotation.Model;
 import org.graphwalker.java.annotation.Vertex;
 import org.graphwalker.java.annotation.Edge;
 
-@Model(file = "org/mc646/tests/OPDModel.json")
+@Model(file = "org/mc646/tests/statemodel/OPDModel.json")
 public interface IOpdModel {
 
     @Vertex()
@@ -55,7 +55,4 @@ public interface IOpdModel {
 
     @Vertex()
     void v_OpdRegistration();
-
-    @Edge()
-    void e_NewEdge();
 }
