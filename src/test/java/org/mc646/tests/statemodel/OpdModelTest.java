@@ -113,7 +113,12 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 		assertTrue(searched);
 		assertTrue(count > 0);
 		opdUpdate = opds.get(0);
-		opdUpdate.setProgYear(++progYear);
+		if ( valid ) {
+			opdUpdate.setProgYear(++progYear);
+		} else {
+			opdUpdate.setAge(-2);
+		}
+
 	}
 
 	@Override
