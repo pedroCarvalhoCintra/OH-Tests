@@ -57,7 +57,6 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	static DataSetUp dataSetUp = new DataSetUp();
 
 	static int progYear;
-	static int count;
 	static List<Opd> opds;
 	static boolean operationOpdSaved;
 	static boolean operationOpdUpdated;
@@ -65,8 +64,8 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	static Opd opdCreate;
 	static Opd opdUpdate;
 	static Opd opdDelete;
-	static boolean valid = false;
-	static boolean searched = false;
+	static boolean valid;
+	static boolean searched;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -90,16 +89,14 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 			patientIoOperationRepository.saveAndFlush(defaultData.getDefaultPatients().get(i));
 		}
 
-		for (int i = 0; i < defaultData.getDefaultOpds().size(); i++) {
-			opdIoOperationRepository.saveAndFlush(defaultData.getDefaultOpds().get(i));
-			count++;
-		}
+//		for (int i = 0; i < defaultData.getDefaultOpds().size(); i++) {
+//			opdIoOperationRepository.saveAndFlush(defaultData.getDefaultOpds().get(i));
+//		}
 
 		progYear = 10;
-		count = 0;
 		valid = false;
+		opds = new ArrayList<>();
 		searched = false;
-
 	}
 
 	@After
@@ -111,14 +108,8 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	public void v_OpdEditRegistration() {
 		System.out.println("v_OpdEditRegistration");
 		assertTrue(searched);
-		assertTrue(count > 0);
+		assertFalse(opds.isEmpty());
 		opdUpdate = opds.get(0);
-		if ( valid ) {
-			opdUpdate.setProgYear(++progYear);
-		} else {
-			opdUpdate.setAge(-2);
-		}
-
 	}
 
 	@Override
@@ -130,7 +121,7 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	public void v_QuestionDelete() {
 		System.out.println("v_QuestionDelete");
 		assertTrue(searched);
-		assertTrue(count > 0);
+		assertFalse(opds.isEmpty());
 		opdDelete = opds.get(0);
 	}
 
@@ -140,7 +131,6 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 		if (valid) {
 			try {
 				opdManager.newOpd(opdCreate);
-				count++;
 				opds.add(opdCreate);
 				operationOpdSaved = true;
 			} catch (OHServiceException e) {
@@ -153,6 +143,7 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	public void e_SaveEditOpd() {
 		System.out.println("e_SaveEditOpd");
 		if (valid) {
+			opdUpdate.setProgYear(++progYear);
 			try {
 				opds.set(0, opdManager.updateOpd(opdUpdate));
 				operationOpdUpdated = true;
@@ -169,20 +160,18 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 
 		String diseaseTypeCode = "L00-L99 Skin and subcutaneous tissue";
 		String diseaseCode = "Acne";
-		GregorianCalendar dateFrom = new GregorianCalendar(2003, 0, 0);
-		GregorianCalendar dateTo = new GregorianCalendar(2005, 0, 0);
+		GregorianCalendar dateFrom = new GregorianCalendar(2020, 0, 0);
+		GregorianCalendar dateTo = new GregorianCalendar();
 		int ageFrom = 0;
 		int ageTo = 100;
 		char sex = 'M';
-		char newPatient = 'n';
+		char newPatient = 'R';
 
 		try {
 			opds = opdManager.getOpd(diseaseTypeCode, diseaseCode, dateFrom, dateTo, ageFrom, ageTo, sex, newPatient);
 		} catch (OHServiceException e) {
 			throw new RuntimeException(e);
 		}
-
-		count = opds.size();
 	}
 
 	@Override
@@ -191,7 +180,7 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 		try {
 			opdManager.deleteOpd(opdDelete);
 			opds.remove(opdDelete);
-			count--;
+			if ( opds.isEmpty() ) searched=false;
 			operationOpdDeleted = true;
 		} catch (OHServiceException e) {
 			throw new RuntimeException(e);
@@ -204,14 +193,11 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 		searched = true;
 
 		boolean ondeWeek = true;
-		List<Opd> opds = null;
 		try {
 			opds = opdManager.getOpd(ondeWeek);
 		} catch (OHServiceException e) {
 			throw new RuntimeException(e);
 		}
-
-		count = opds.size();
 	}
 
 	@Override
@@ -249,7 +235,7 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 			boolean opdDeleted = true;
 			List<Opd> opdsDb = opdIoOperationRepository.findAll();
 			for (Opd opd : opdsDb) {
-				if (opd.getProgYear() == opdDelete.getProgYear()) {
+				if (opd.getProgYear() == opdDelete.getProgYear() && Objects.equals(opd.getfirstName(), opdDelete.getfirstName())) {
 					opdDeleted = false;
 					break;
 				}
@@ -295,14 +281,11 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 		searched = true;
 
 		int patientId = 1;
-		List<Opd> opds = null;
 		try {
 			opds = opdManager.getOpdList(patientId);
 		} catch (OHServiceException e) {
 			throw new RuntimeException(e);
 		}
-
-		count = opds.size();
 	}
 
 	@Override
@@ -894,7 +877,7 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	}
 
 	@Test
-	public void smokeTest() {
+	public void smokeTestOffline() {
 		System.out.println("Running smoke test");
 		v_Opd();
 		e_OpdNew();
@@ -902,7 +885,7 @@ public class OpdModelTest extends OHCoreTestCaseModel implements IOpdModel {
 	}
 	
 	@Test
-	public void stabilityTest() {
+	public void stabilityTestOffline() {
 		//Running for 20 seconds resulted in 429000 lines of method calls.
 		//Running for 5 seconds resulted in about 9000-11000.
 		System.out.println("Running stability test - Estimated duration: 4 seconds.");
